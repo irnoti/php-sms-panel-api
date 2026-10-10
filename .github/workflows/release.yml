@@ -1,0 +1,22 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: curl, json, coverage: none }
+      - run: composer validate --strict --no-check-lock
+      - run: composer install --no-interaction --prefer-dist
+      - run: vendor/bin/phpunit
+      # Packagist picks the tag up through its GitHub webhook; no publish step is needed.
+      - run: gh release create "$GITHUB_REF_NAME" --generate-notes
+        env: { GH_TOKEN: '${{ github.token }}' }

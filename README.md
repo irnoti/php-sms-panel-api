@@ -1,6 +1,12 @@
 # irnoti/php-sms-panel-api
 
+[![Packagist](https://img.shields.io/packagist/v/irnoti/php-sms-panel-api.svg)](https://packagist.org/packages/irnoti/php-sms-panel-api) [![tests](https://github.com/irnoti/php-sms-panel-api/actions/workflows/tests.yml/badge.svg)](https://github.com/irnoti/php-sms-panel-api/actions/workflows/tests.yml) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+
 Framework-agnostic PHP SDK (ext-curl). On Laravel use [irnoti/laravel-sms-panel-api](https://github.com/irnoti/laravel-sms-panel-api), which adds the service provider, facade and config.
+
+```bash
+composer require irnoti/php-sms-panel-api
+```
 
 ```php
 $irnoti = new Irnoti\Sdk\IrnotiClient(getenv('IRNOTI_API_KEY'));   // baseUrl, timeout, retries, transport are optional
