@@ -77,4 +77,26 @@ class ClientTest extends TestCase
         $c = $this->client();
         $this->assertNotSame($c, $c->withApiKey('irn_live_y'));
     }
+
+    public function test_broker_routes_and_bodies(): void
+    {
+        $b = $this->client(200, '{}')->broker();
+        $b->request(7, 'sendMessage', ['chat_id' => 1, 'text' => 'hi']);
+        $b->updates(7, limit: 10, allowedUpdates: ['message']);
+        $b->setWebhook(7, 'https://example.com/hook', secretToken: 's');
+        $b->deleteWebhook(7, true);
+        $b->replaceToken(7, '123456:ABCDEF-token');
+
+        $got = array_map(fn ($c) => [$c[0], $c[1]], $this->calls);
+        $this->assertSame([
+            ['POST', 'https://irnoti.test/v1/broker/bots/7/request'],
+            ['POST', 'https://irnoti.test/v1/broker/bots/7/updates'],
+            ['PUT', 'https://irnoti.test/v1/broker/bots/7/webhook'],
+            ['DELETE', 'https://irnoti.test/v1/broker/bots/7/webhook'],
+            ['PUT', 'https://irnoti.test/v1/broker/bots/7/token'],
+        ], $got);
+        $this->assertSame(['method' => 'sendMessage', 'params' => ['chat_id' => 1, 'text' => 'hi']], json_decode($this->calls[0][3], true));
+        $this->assertSame(['limit' => 10, 'allowedUpdates' => ['message']], json_decode($this->calls[1][3], true));
+        $this->assertSame(['dropPendingUpdates' => true], json_decode($this->calls[3][3], true));
+    }
 }

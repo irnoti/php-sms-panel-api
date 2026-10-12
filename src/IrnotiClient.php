@@ -5,6 +5,7 @@ namespace Irnoti\Sdk;
 use Irnoti\Sdk\Exceptions\IrnotiApiException;
 use Irnoti\Sdk\Resources\BatchesResource;
 use Irnoti\Sdk\Resources\BotsResource;
+use Irnoti\Sdk\Resources\BrokerResource;
 use Irnoti\Sdk\Resources\LinesResource;
 use Irnoti\Sdk\Resources\LinkTrackerResource;
 use Irnoti\Sdk\Resources\MessagesResource;
@@ -60,6 +61,7 @@ class IrnotiClient
     public function numberBanks(): NumberBanksResource { return new NumberBanksResource($this); }
     public function verify(): VerifyResource { return new VerifyResource($this); }
     public function bots(): BotsResource { return new BotsResource($this); }
+    public function broker(): BrokerResource { return new BrokerResource($this); }
     public function voip(): VoipResource { return new VoipResource($this); }
 
     /**
