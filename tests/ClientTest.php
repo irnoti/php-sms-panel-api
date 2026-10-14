@@ -35,6 +35,14 @@ class ClientTest extends TestCase
         $this->assertSame(['lineId' => '1', 'to' => ['0912'], 'groupIds' => ['12'], 'text' => 'hi'], json_decode($b, true));
     }
 
+    public function test_send_omits_line_id_when_not_given(): void
+    {
+        $this->client(201, '{"batchId":"1","count":1,"totalPrice":"980","replayed":false}')
+            ->sms()->send(text: 'hi', to: '0912');
+
+        $this->assertSame(['to' => '0912', 'text' => 'hi'], json_decode($this->calls[0][3], true));
+    }
+
     public function test_get_query_and_empty_params_object(): void
     {
         $c = $this->client(200, '[]');

@@ -29,7 +29,7 @@ class NumberBanksResource extends Resource
      * @param  array{operator?: string, province?: string, city?: string, tag?: string}  $filters
      * @return array<string, mixed>
      */
-    public function quote(string|int $bankId, int $count, string|int $lineId, string $text, array $filters = []): array
+    public function quote(string|int $bankId, int $count, string|int|null $lineId, string $text, array $filters = []): array
     {
         return $this->client->request('post', '/number-banks/quote', $this->body($bankId, $count, $lineId, $text, $filters));
     }
@@ -38,7 +38,7 @@ class NumberBanksResource extends Resource
      * @param  array{operator?: string, province?: string, city?: string, tag?: string}  $filters
      * @return array<string, mixed>
      */
-    public function send(string|int $bankId, int $count, string|int $lineId, string $text, array $filters = [], ?string $idempotencyKey = null): array
+    public function send(string|int $bankId, int $count, string|int|null $lineId, string $text, array $filters = [], ?string $idempotencyKey = null): array
     {
         return $this->client->request('post', '/number-banks/send', $this->body($bankId, $count, $lineId, $text, $filters), $this->idempotency($idempotencyKey));
     }
@@ -47,14 +47,14 @@ class NumberBanksResource extends Resource
      * @param  array<string, string>  $filters
      * @return array<string, mixed>
      */
-    private function body(string|int $bankId, int $count, string|int $lineId, string $text, array $filters): array
+    private function body(string|int $bankId, int $count, string|int|null $lineId, string $text, array $filters): array
     {
-        return [
+        return array_filter([
             'bankId' => (string) $bankId,
             'count' => $count,
-            'lineId' => (string) $lineId,
+            'lineId' => $lineId === null || $lineId === '' ? null : (string) $lineId,
             'text' => $text,
             'filters' => (object) $filters,
-        ];
+        ], static fn ($v) => $v !== null);
     }
 }

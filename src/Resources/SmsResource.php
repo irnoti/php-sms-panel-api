@@ -13,7 +13,7 @@ class SmsResource extends Resource
     /**
      * Send one text to one or many recipients and/or phonebook groups. Scope: `sms.send`.
      *
-     * Pass `lineId: 'sandbox'` with an `irn_test_…` key to try the API for free.
+     * `lineId` is optional — omit it and the server picks the sender line. Pass `lineId: 'sandbox'` with an `irn_test_…` key to try the API for free.
      * Give `scheduledAt` (1 minute – 60 days ahead) to send later, and/or `gradual`
      * (`['chunkSize' => 500, 'intervalMinutes' => 10]`) to drip the batch out.
      *
@@ -24,8 +24,8 @@ class SmsResource extends Resource
      * @return array{batchId: string, count: int, totalPrice: string, replayed: bool}
      */
     public function send(
-        string|int $lineId,
-        string $text,
+        string|int|null $lineId = null,
+        string $text = '',
         string|array|null $to = null,
         array $groupIds = [],
         \DateTimeInterface|string|null $scheduledAt = null,
@@ -33,7 +33,7 @@ class SmsResource extends Resource
         ?string $idempotencyKey = null,
     ): array {
         return $this->client->request('post', '/sms/send', $this->filter([
-            'lineId' => (string) $lineId,
+            'lineId' => $lineId === null || $lineId === '' ? null : (string) $lineId,
             'to' => $to,
             'groupIds' => $groupIds ? array_map('strval', $groupIds) : null,
             'text' => $text,
@@ -49,10 +49,10 @@ class SmsResource extends Resource
      * @param  array<int, int|string>  $groupIds
      * @return array{count: int, parts: int, totalPrice: string}
      */
-    public function quote(string|int $lineId, string $text, string|array|null $to = null, array $groupIds = []): array
+    public function quote(string|int|null $lineId = null, string $text = '', string|array|null $to = null, array $groupIds = []): array
     {
         return $this->client->request('post', '/sms/quote', $this->filter([
-            'lineId' => (string) $lineId,
+            'lineId' => $lineId === null || $lineId === '' ? null : (string) $lineId,
             'to' => $to,
             'groupIds' => $groupIds ? array_map('strval', $groupIds) : null,
             'text' => $text,
