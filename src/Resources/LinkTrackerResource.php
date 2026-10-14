@@ -16,9 +16,9 @@ class LinkTrackerResource extends Resource
      * @return array<string, mixed>
      */
     public function send(
-        string|int $lineId,
-        string $text,
-        string $url,
+        string|int|null $lineId = null,
+        string $text = '',
+        string $url = '',
         array $to = [],
         array $groupIds = [],
         array $variants = [],
@@ -26,7 +26,7 @@ class LinkTrackerResource extends Resource
         ?int $decideAfterMinutes = null,
     ): array {
         return $this->client->request('post', '/link-tracker/send', $this->filter([
-            'lineId' => (string) $lineId,
+            'lineId' => $lineId === null || $lineId === '' ? null : (string) $lineId,
             'text' => $text,
             'url' => $url,
             'to' => $to ?: null,
